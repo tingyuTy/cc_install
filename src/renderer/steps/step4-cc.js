@@ -22,9 +22,12 @@ Steps[4] = {
       document.getElementById('cc-status-text').style.color = '#66bb6a';
       const alreadyEl = document.getElementById('cc-already');
       alreadyEl.style.display = '';
-      alreadyEl.innerHTML = `✅ 您已安装 ${env.claude}<br><br>无需重新安装，可直接进入下一步配置模型。<br>如需重新安装，请点击下方"重试"按钮。`;
+      alreadyEl.innerHTML = `✅ 您已安装 ${env.claude}<br><br>• 点击 <b>"下一步"</b> 直接进入模型配置<br>• 点击 <b>"🗑 卸载 Claude Code"</b> 卸载后重新安装<br>• 点击 <b>"重试"</b> 覆盖安装`;
       AppState.isInstalling = false;
       AppState.updateButtons();
+      // Show retry button so user can reinstall
+      document.getElementById('retry-btn').style.display = '';
+      document.getElementById('retry-btn').textContent = '重新安装';
       return;
     }
 
