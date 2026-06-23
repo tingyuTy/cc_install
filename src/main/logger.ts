@@ -7,7 +7,7 @@ export class GlobalLogger {
   private logs: LogEntry[] = [];
   private listeners: Array<(entry: LogEntry) => void> = [];
 
-  log(text: string): void {
+  log = (text: string): void => {
     const entry: LogEntry = {
       timestamp: new Date().toTimeString().slice(0, 8),
       text,
