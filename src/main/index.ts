@@ -1,9 +1,27 @@
-import { app, BrowserWindow, dialog } from 'electron';
+import { app, BrowserWindow, dialog, nativeImage } from 'electron';
 import { join } from 'path';
+import { existsSync } from 'fs';
 import { GlobalLogger } from './logger';
 import { registerIpcHandlers, getCloseGuardMessage } from './ipc-handlers';
 
 const logger = new GlobalLogger();
+
+function setAppIcon(): void {
+  // Dev: assets/icon.png relative to project root
+  // Packaged: inside app resources
+  const devPath = join(__dirname, '../../assets/icon.png');
+  const pkgPath = join(process.resourcesPath || '', 'assets/icon.png');
+  const iconPath = existsSync(devPath) ? devPath : pkgPath;
+
+  if (!existsSync(iconPath)) return;
+
+  const icon = nativeImage.createFromPath(iconPath);
+
+  // macOS Dock icon
+  if (process.platform === 'darwin' && app.dock) {
+    app.dock.setIcon(icon);
+  }
+}
 
 function createWindow(): void {
   const win = new BrowserWindow({
@@ -11,6 +29,7 @@ function createWindow(): void {
     height: 580,
     resizable: false,
     title: 'Claude Code Installer',
+    icon: join(__dirname, '../../assets/icon.png'),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       contextIsolation: true,
@@ -41,6 +60,7 @@ function createWindow(): void {
 }
 
 app.whenReady().then(() => {
+  setAppIcon();
   registerIpcHandlers(logger);
   createWindow();
 
