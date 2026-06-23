@@ -1,0 +1,28 @@
+appId: com.ccinstaller.app
+productName: Claude Code Installer
+directories:
+  output: release
+  buildResources: assets
+
+mac:
+  target:
+    - dmg
+    - zip
+  artifactName: cc-installer-${version}-mac.${ext}
+  icon: assets/icon.png
+
+win:
+  target:
+    - nsis
+    - zip
+  artifactName: cc-installer-${version}-win.${ext}
+  icon: assets/icon.png
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+
+files:
+  - dist/**/*
+  - assets/**/*
+  - package.json
