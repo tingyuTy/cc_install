@@ -5,8 +5,8 @@
   "description": "一键安装 Claude Code 的跨平台桌面工具",
   "main": "dist/main/index.js",
   "scripts": {
-    "dev": "tsc && mkdir -p dist/renderer/steps && cp src/renderer/index.html dist/renderer/ && cp src/renderer/style.css dist/renderer/ && cp src/renderer/app.js dist/renderer/ && cp src/renderer/steps/*.js dist/renderer/steps/ && electron .",
-    "build": "tsc && mkdir -p dist/renderer/steps && cp src/renderer/index.html dist/renderer/ && cp src/renderer/style.css dist/renderer/ && cp src/renderer/app.js dist/renderer/ && cp src/renderer/steps/*.js dist/renderer/steps/ && electron-builder",
+    "dev": "tsc && node -e \"require('fs').cpSync('src/renderer','dist/renderer',{recursive:true})\" && electron .",
+    "build": "node scripts/build.js",
     "test": "vitest run",
     "test:watch": "vitest"
   },
