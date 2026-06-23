@@ -1,4 +1,234 @@
 {
   "version": "2.13",
-  "children": []
+  "children": [
+    {
+      "type": "frame",
+      "id": "KOIii",
+      "x": 0,
+      "y": 0,
+      "name": "App Icon",
+      "width": 1024,
+      "height": 1024,
+      "fill": "#0D1117",
+      "cornerRadius": 200,
+      "layout": "none",
+      "children": [
+        {
+          "type": "ellipse",
+          "id": "huNZp",
+          "x": 212,
+          "y": 80,
+          "name": "Center Glow",
+          "fill": "#1A237E30",
+          "width": 600,
+          "height": 600,
+          "effect": {
+            "type": "blur",
+            "radius": 120
+          }
+        },
+        {
+          "type": "frame",
+          "id": "pV3d1",
+          "x": 132,
+          "y": 200,
+          "name": "Terminal Window",
+          "width": 760,
+          "height": 660,
+          "fill": "#161B22",
+          "cornerRadius": 28,
+          "stroke": "#30363D",
+          "strokeWidth": 2,
+          "layout": "none",
+          "children": [
+            {
+              "type": "frame",
+              "id": "HDZHd",
+              "x": 0,
+              "y": 0,
+              "name": "Title Bar",
+              "width": 760,
+              "height": 52,
+              "gap": 10,
+              "padding": [
+                18,
+                22
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "HwNPp",
+                  "name": "Red Dot",
+                  "fill": "#FF5F57",
+                  "width": 15,
+                  "height": 15
+                },
+                {
+                  "type": "ellipse",
+                  "id": "P8vHr",
+                  "name": "Yellow Dot",
+                  "fill": "#FFBD2E",
+                  "width": 15,
+                  "height": 15
+                },
+                {
+                  "type": "ellipse",
+                  "id": "CCJvr",
+                  "name": "Green Dot",
+                  "fill": "#28CA41",
+                  "width": 15,
+                  "height": 15
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "IaP4x",
+              "x": 0,
+              "y": 52,
+              "name": "Terminal Body",
+              "width": 760,
+              "height": 560,
+              "layout": "vertical",
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "A7CsFf",
+                  "name": "Stars Row",
+                  "width": 560,
+                  "height": 164,
+                  "gap": 64,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "path",
+                      "id": "u9Lie",
+                      "name": "Claude Star 1",
+                      "geometry": "M72 0l27.36 44.64 44.64 27.36-44.64 27.36-27.36 44.64-27.36-44.64-44.64-27.36 44.64-27.36z",
+                      "viewBox": [
+                        0,
+                        0,
+                        144,
+                        144
+                      ],
+                      "fill": "#F59E0B",
+                      "width": 144,
+                      "height": 144
+                    },
+                    {
+                      "type": "path",
+                      "id": "xdEu1",
+                      "name": "Claude Star 2",
+                      "geometry": "M72 0l27.36 44.64 44.64 27.36-44.64 27.36-27.36 44.64-27.36-44.64-44.64-27.36 44.64-27.36z",
+                      "viewBox": [
+                        0,
+                        0,
+                        144,
+                        144
+                      ],
+                      "fill": "#F59E0B",
+                      "width": 144,
+                      "height": 144
+                    },
+                    {
+                      "type": "path",
+                      "id": "B3eKt",
+                      "name": "Claude Star 3",
+                      "geometry": "M72 0l27.36 44.64 44.64 27.36-44.64 27.36-27.36 44.64-27.36-44.64-44.64-27.36 44.64-27.36z",
+                      "viewBox": [
+                        0,
+                        0,
+                        144,
+                        144
+                      ],
+                      "fill": "#F59E0B",
+                      "width": 144,
+                      "height": 144
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "T7YnW5",
+                  "name": "Spacer",
+                  "width": 760,
+                  "height": 24,
+                  "layout": "none"
+                },
+                {
+                  "type": "frame",
+                  "id": "FmwTL",
+                  "name": "Command Area",
+                  "width": 640,
+                  "layout": "vertical",
+                  "gap": 8,
+                  "padding": [
+                    16,
+                    20
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "c73FN3",
+                      "name": "Prompt",
+                      "fill": "#E6EDF3",
+                      "content": "$ claude",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 28,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "text",
+                      "id": "fzXwa",
+                      "name": "Subtitle",
+                      "fill": "#8B949E",
+                      "content": "AI coding assistant",
+                      "fontFamily": "JetBrains Mono",
+                      "fontSize": 18,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "o4Gccx",
+          "x": 454,
+          "y": 880,
+          "name": "Install Badge",
+          "width": 120,
+          "height": 120,
+          "fill": "#238636",
+          "cornerRadius": 60,
+          "layout": "vertical",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "path",
+              "id": "NWrqM",
+              "name": "Down Arrow",
+              "geometry": "M28 0l0 32-22 0 22 20 22-20-22 0z",
+              "viewBox": [
+                0,
+                0,
+                56,
+                56
+              ],
+              "fill": "#FFFFFF",
+              "width": 56,
+              "height": 56
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
