@@ -1,4 +1,5 @@
 import { getOSInfo, checkClaudeCodeCompatibility } from '../utils/platform';
+import { join } from 'path';
 
 export async function installClaudeCode(
   runCommand: (cmd: string, args: string[]) => Promise<{ stdout: string; stderr: string; exitCode: number }>,
@@ -7,6 +8,7 @@ export async function installClaudeCode(
 ): Promise<{ success: boolean; version: string; warning?: string }> {
   // Log OS info and check compatibility
   const osInfo = getOSInfo();
+  const isWindows = osInfo.platform === 'win32';
   onLog(`操作系统: ${osInfo.name} (${osInfo.arch})`);
   onLog(`系统版本: ${osInfo.version}`);
 
@@ -17,7 +19,6 @@ export async function installClaudeCode(
   }
 
   // Windows: use npm (official recommendation); macOS: use pnpm
-  const isWindows = osInfo.platform === 'win32';
   const installCmd = isWindows ? 'npm' : 'pnpm';
   const installArgs = isWindows
     ? ['install', '-g', '--registry', 'https://registry.npmmirror.com', '@anthropic-ai/claude-code']
@@ -29,13 +30,12 @@ export async function installClaudeCode(
 
   const installResult = await runCommand(installCmd, installArgs);
 
-  // Log stdout summary
   if (installResult.stdout.trim()) {
     onLog(`安装输出: ${installResult.stdout.trim()}`);
   }
 
   if (installResult.exitCode !== 0) {
-    onLog(`安装失败，pnpm 退出码: ${installResult.exitCode}`);
+    onLog(`安装失败，${installCmd} 退出码: ${installResult.exitCode}`);
     if (installResult.stderr.trim()) {
       onLog(`错误详情: ${installResult.stderr.trim()}`);
     }
@@ -43,17 +43,38 @@ export async function installClaudeCode(
   }
 
   onLog(`${installCmd} 安装命令执行成功`);
+
+  // Find the actual claude binary location
+  let claudeBin = 'claude';
+  if (isWindows) {
+    const npmPrefix = await runCommand('npm', ['prefix', '-g']);
+    if (npmPrefix.exitCode === 0) {
+      const npmDir = npmPrefix.stdout.trim();
+      // npm global bin is at <prefix>/ on Unix, <prefix>/ on Windows (npm puts it in the same prefix dir)
+      // Actually npm on Windows puts binaries in <prefix>/ (which is %APPDATA%/npm)
+      const candidate = join(npmDir, 'claude.cmd');
+      claudeBin = candidate;
+      onLog(`Claude Code 安装位置: ${npmDir}`);
+    }
+  }
+
   onProgress(80, '正在验证安装结果...');
 
   // Try to detect the installed version
   let version = '';
   let claudeError = '';
-  const verify = await runCommand('claude', ['--version']);
+
+  // Try direct claude command first
+  let verify = await runCommand('claude', ['--version']);
+  if (verify.exitCode !== 0 && isWindows) {
+    // On Windows, claude might not be in PATH — try full path
+    verify = await runCommand(claudeBin, ['--version']);
+  }
+
   if (verify.exitCode === 0 && verify.stdout.trim()) {
     version = verify.stdout.trim();
     onLog(`检测到版本: ${version}`);
   } else {
-    // Collect any error info
     if (verify.stderr.trim()) {
       claudeError += verify.stderr.trim();
       onLog(`版本检查输出: ${verify.stderr.trim()}`);
@@ -63,14 +84,16 @@ export async function installClaudeCode(
     }
 
     // Try --help as fallback
-    const help = await runCommand('claude', ['--help']);
+    let help = await runCommand('claude', ['--help']);
+    if (help.exitCode !== 0 && isWindows) {
+      help = await runCommand(claudeBin, ['--help']);
+    }
     if (help.exitCode === 0) {
       onLog('Claude Code 可正常执行');
     } else if (help.stderr.trim()) {
       claudeError += '\n' + help.stderr.trim();
     }
 
-    // Check if version in stderr
     const verMatch = claudeError.match(/(\d+\.\d+\.\d+)/);
     if (verMatch) {
       version = verMatch[1];
@@ -78,16 +101,31 @@ export async function installClaudeCode(
     }
   }
 
-  // Check if the error indicates OS incompatibility (Windows)
+  // Check error type
+  const isNotFound = claudeError.includes('找不到') || claudeError.includes('not found') || claudeError.includes('not recognized');
   const isWinCompatError = claudeError.includes('不兼容') || claudeError.includes('incompatible');
+  const isPathIssue = isWindows && isNotFound;
 
-  // Build result message
   if (version) {
     onLog(`Claude Code ${version} 安装成功 ✓`);
     onProgress(100, `Claude Code ${version} 安装成功 ✓`);
+    if (isWindows) {
+      onLog('提示: 如果在命令行中找不到 claude 命令，请将以下路径添加到系统 PATH:');
+      onLog(`  %APPDATA%\\npm`);
+    }
   } else {
     onLog('Claude Code 安装完成（文件已安装）');
-    if (isWinCompatError) {
+
+    if (isPathIssue) {
+      onLog('=================================================================');
+      onLog('  ⚠ claude 命令未在系统 PATH 中找到');
+      onLog('  解决方法 — 将以下路径添加到系统环境变量 PATH 中:');
+      onLog(`  %APPDATA%\\npm`);
+      onLog('  步骤: 设置 → 系统 → 关于 → 高级系统设置 → 环境变量');
+      onLog('  在 "用户变量" 中找到 Path，添加: %APPDATA%\\npm');
+      onLog('  然后重新打开命令行窗口即可使用 claude 命令');
+      onLog('=================================================================');
+    } else if (isWinCompatError) {
       onLog('=================================================================');
       onLog('  ⚠ Claude Code 当前版本不支持 Windows 10');
       onLog('  该二进制文件需要 Windows 11 才能运行。');
@@ -104,11 +142,14 @@ export async function installClaudeCode(
     onProgress(100, 'Claude Code 安装完成 ✓');
   }
 
-  return {
-    success: true,
-    version: version || 'installed',
-    warning: isWinCompatError
-      ? 'Claude Code 不支持 Windows 10。请升级到 Windows 11 或使用 WSL2。'
-      : (compat.warning || undefined),
-  };
+  let warning: string | undefined;
+  if (isPathIssue) {
+    warning = 'claude 命令未在 PATH 中。请将 %APPDATA%\\npm 添加到系统环境变量 Path 中，然后重新打开命令行。';
+  } else if (isWinCompatError) {
+    warning = 'Claude Code 不支持 Windows 10。请升级到 Windows 11 或使用 WSL2。';
+  } else if (compat.warning) {
+    warning = compat.warning;
+  }
+
+  return { success: true, version: version || 'installed', warning };
 }
