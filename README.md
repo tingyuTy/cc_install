@@ -47,7 +47,7 @@ pnpm dev
 pnpm build
 
 # Windows
-ts-node scripts/build.ts win32
+node scripts/build.js win32
 ```
 
 构建产物输出到 `release/` 目录：
