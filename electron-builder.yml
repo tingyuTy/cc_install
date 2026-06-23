@@ -20,6 +20,7 @@ win:
     - zip
   artifactName: cc-installer-${version}-win.${ext}
   icon: assets/icon.png
+  sign: null
 
 nsis:
   oneClick: false

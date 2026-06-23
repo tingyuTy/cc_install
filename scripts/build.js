@@ -8,10 +8,11 @@ const mirrorEnv = USE_MIRROR ? {
   ELECTRON_MIRROR: 'https://npmmirror.com/mirrors/electron/',
   ELECTRON_BUILDER_BINARIES_MIRROR: 'https://npmmirror.com/mirrors/electron-builder-binaries/',
 } : {};
+const noSignEnv = { CSC_IDENTITY_AUTO_DISCOVERY: 'false' };
 
 function run(cmd) {
   console.log(`\n> ${cmd}`);
-  execSync(cmd, { stdio: 'inherit', env: { ...process.env, ...mirrorEnv } });
+  execSync(cmd, { stdio: 'inherit', env: { ...process.env, ...mirrorEnv, ...noSignEnv } });
 }
 
 function copyDir(src, dest) {
