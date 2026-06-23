@@ -20,16 +20,28 @@ export async function checkPnpm(
   return null;
 }
 
+export async function checkClaudeCode(
+  runCommand: (cmd: string, args: string[]) => Promise<{ stdout: string; stderr: string; exitCode: number }>
+): Promise<string | null> {
+  const result = await runCommand('claude', ['--version']);
+  if (result.exitCode === 0 && result.stdout.trim()) {
+    return result.stdout.trim();
+  }
+  return null;
+}
+
 export async function checkEnv(
   runCommand: (cmd: string, args: string[]) => Promise<{ stdout: string; stderr: string; exitCode: number }>
-): Promise<{ node: string | null; pnpm: string | null; platform: string }> {
-  const [node, pnpm] = await Promise.all([
+): Promise<{ node: string | null; pnpm: string | null; claude: string | null; platform: string }> {
+  const [node, pnpm, claude] = await Promise.all([
     checkNode(runCommand),
     checkPnpm(runCommand),
+    checkClaudeCode(runCommand),
   ]);
   return {
     node,
     pnpm,
+    claude,
     platform: getPlatform(),
   };
 }

@@ -53,7 +53,7 @@ export async function installClaudeCode(
       claudeBin = join(npmDir, 'claude.cmd');
       onLog(`Claude Code 安装位置: ${npmDir}`);
 
-      // Read PERMANENT user PATH from registry (not process.env which may be temporary)
+      // Read PERMANENT user PATH from registry and ensure npm bin is in it
       onLog('正在配置系统 PATH...');
       const regResult = await runCommand('reg', [
         'query', 'HKCU\\Environment',
@@ -65,8 +65,14 @@ export async function installClaudeCode(
         if (match) existingUserPath = match[1].trim();
       }
 
-      // Check if npmDir is already in the permanent registry PATH (case-insensitive on Windows)
-      if (!existingUserPath.toLowerCase().includes(npmDir.toLowerCase())) {
+      // Expand any %VAR% references in the registry PATH for comparison
+      const expandedRegPath = existingUserPath
+        .replace(/%APPDATA%/gi, process.env.APPDATA || '')
+        .replace(/%USERPROFILE%/gi, process.env.USERPROFILE || '')
+        .replace(/%LOCALAPPDATA%/gi, process.env.LOCALAPPDATA || '')
+        .toLowerCase();
+
+      if (!expandedRegPath.includes(npmDir.toLowerCase())) {
         onLog(`将 npm 全局路径添加到用户 PATH: ${npmDir}`);
         const newPath = existingUserPath
           ? `${existingUserPath};${npmDir}`

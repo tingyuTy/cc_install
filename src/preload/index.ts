@@ -2,7 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('api', {
   // Environment check
-  checkEnv: (): Promise<{ node: string | null; pnpm: string | null; platform: string }> =>
+  checkEnv: (): Promise<{ node: string | null; pnpm: string | null; claude: string | null; platform: string }> =>
     ipcRenderer.invoke('check-env'),
 
   // Install steps
