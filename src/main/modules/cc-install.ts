@@ -53,32 +53,49 @@ export async function installClaudeCode(
       claudeBin = join(npmDir, 'claude.cmd');
       onLog(`Claude Code 安装位置: ${npmDir}`);
 
-      // Add npm global bin to user PATH — always write, don't guess
+      // Add npm global bin to Windows SYSTEM PATH
       onLog('正在配置系统 PATH...');
-      // Read registry PATH first
-      const regResult = await runCommand('reg', [
-        'query', 'HKCU\\Environment',
+
+      // Read system PATH from HKLM (machine-wide, needs admin to write)
+      const sysRegResult = await runCommand('reg', [
+        'query', 'HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment',
         '/v', 'Path',
       ]);
-      let existingUserPath = '';
-      if (regResult.exitCode === 0) {
-        const match = regResult.stdout.match(/Path\s+REG_\w+\s+(.+)/);
-        if (match) existingUserPath = match[1].trim();
+      let systemPath = '';
+      if (sysRegResult.exitCode === 0) {
+        const m = sysRegResult.stdout.match(/Path\s+REG_\w+\s+(.+)/);
+        if (m) systemPath = m[1].trim();
       }
 
-      // Always use the npmDir in PATH — if already present, setx is harmless
-      // Use the raw directory path (not %VAR%) for reliability
-      const newPath = existingUserPath
-        ? `${existingUserPath};${npmDir}`
+      const newSystemPath = systemPath
+        ? `${systemPath};${npmDir}`
         : npmDir;
-      onLog(`写入用户 PATH: ${npmDir}`);
-      const setxResult = await runCommand('setx', ['Path', newPath]);
-      if (setxResult.exitCode === 0) {
-        onLog('已添加到用户 PATH（新命令行窗口生效）');
-        // Also update current process PATH so verification works immediately
+
+      // Try system-level first (admin required)
+      onLog(`写入系统 PATH (需要管理员权限): ${npmDir}`);
+      const setxSys = await runCommand('setx', ['/M', 'Path', newSystemPath]);
+      if (setxSys.exitCode === 0) {
+        onLog('已添加到系统 PATH（新命令行窗口生效）');
         process.env.PATH = `${process.env.PATH};${npmDir}`;
       } else {
-        onLog(`PATH 写入失败: ${setxResult.stderr}`);
+        // Fallback: user PATH (no admin needed)
+        onLog('系统 PATH 写入失败（需要管理员权限），降级为用户 PATH');
+        const userRegResult = await runCommand('reg', [
+          'query', 'HKCU\\Environment', '/v', 'Path',
+        ]);
+        let userPath = '';
+        if (userRegResult.exitCode === 0) {
+          const m = userRegResult.stdout.match(/Path\s+REG_\w+\s+(.+)/);
+          if (m) userPath = m[1].trim();
+        }
+        const newUserPath = userPath ? `${userPath};${npmDir}` : npmDir;
+        const setxUser = await runCommand('setx', ['Path', newUserPath]);
+        if (setxUser.exitCode === 0) {
+          onLog('已添加到用户 PATH（新命令行窗口生效）');
+          process.env.PATH = `${process.env.PATH};${npmDir}`;
+        } else {
+          onLog(`用户 PATH 写入也失败: ${setxUser.stderr}`);
+        }
       }
     }
   }
