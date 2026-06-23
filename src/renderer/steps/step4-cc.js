@@ -7,6 +7,7 @@ Steps[4] = {
           <div class="progress-fill" id="cc-progress"></div>
         </div>
         <div id="cc-status-text" style="font-size:13px; color:#aaa;">准备中...</div>
+        <div id="cc-warning" style="margin-top:12px; padding:12px; background:#3E2723; border:1px solid #E65100; border-radius:6px; font-size:12px; line-height:1.6; display:none;"></div>
       </div>
     `;
   },
@@ -23,7 +24,17 @@ Steps[4] = {
 
       if (result.success) {
         document.getElementById('cc-progress').style.width = '100%';
-        document.getElementById('cc-status-text').textContent = `Claude Code 安装成功: ${result.version}`;
+        const statusEl = document.getElementById('cc-status-text');
+        const warningEl = document.getElementById('cc-warning');
+
+        if (result.warning) {
+          statusEl.textContent = 'Claude Code 已安装，但无法运行 ⚠';
+          statusEl.style.color = '#FF9800';
+          warningEl.style.display = '';
+          warningEl.innerHTML = result.warning.replace(/\n/g, '<br>');
+        } else {
+          statusEl.textContent = `Claude Code 安装成功: ${result.version}`;
+        }
         AppState.goNext();
       }
     });

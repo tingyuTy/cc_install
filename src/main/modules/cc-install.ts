@@ -75,16 +75,28 @@ export async function installClaudeCode(
     }
   }
 
+  // Check if the error indicates OS incompatibility (Windows)
+  const isWinCompatError = claudeError.includes('不兼容') || claudeError.includes('incompatible');
+
   // Build result message
   if (version) {
     onLog(`Claude Code ${version} 安装成功 ✓`);
     onProgress(100, `Claude Code ${version} 安装成功 ✓`);
   } else {
     onLog('Claude Code 安装完成（文件已安装）');
-    if (claudeError) {
+    if (isWinCompatError) {
+      onLog('=================================================================');
+      onLog('  ⚠ Claude Code 当前版本不支持 Windows 10');
+      onLog('  该二进制文件需要 Windows 11 才能运行。');
+      onLog('  解决方案：');
+      onLog('  1. 升级到 Windows 11');
+      onLog('  2. 安装 WSL2 (Windows Subsystem for Linux)');
+      onLog('     管理员 PowerShell 运行: wsl --install');
+      onLog('     然后在 WSL 终端中运行: pnpm install -g @anthropic-ai/claude-code');
+      onLog('=================================================================');
+    } else if (claudeError) {
       onLog('注意: Claude Code 可能无法在当前系统上运行');
       onLog('请确认你的系统满足 Claude Code 的运行要求');
-      onLog('Windows 用户建议使用 Windows 11 或通过 WSL 运行');
     }
     onProgress(100, 'Claude Code 安装完成 ✓');
   }
@@ -92,6 +104,8 @@ export async function installClaudeCode(
   return {
     success: true,
     version: version || 'installed',
-    warning: compat.warning || (claudeError ? `Claude Code 可能无法运行: ${claudeError.slice(0, 200)}` : undefined),
+    warning: isWinCompatError
+      ? 'Claude Code 不支持 Windows 10。请升级到 Windows 11 或使用 WSL2。'
+      : (compat.warning || undefined),
   };
 }
