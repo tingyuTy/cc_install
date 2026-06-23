@@ -5,12 +5,12 @@ import { GlobalLogger } from '../logger';
 describe('cc-install', () => {
   const logger = new GlobalLogger();
 
-  function makeRunCommand(outputs: Array<{ stdout: string; exitCode: number }>) {
+  function makeRunCommand(outputs: Array<{ stdout: string; stderr?: string; exitCode: number }>) {
     let callIndex = 0;
     return async (_cmd: string, _args: string[]) => {
       const output = outputs[callIndex] || outputs[outputs.length - 1];
       callIndex++;
-      return { stdout: output.stdout, stderr: '', exitCode: output.exitCode };
+      return { stdout: output.stdout, stderr: output.stderr || '', exitCode: output.exitCode };
     };
   }
 
@@ -29,11 +29,21 @@ describe('cc-install', () => {
   it('should fail if install command fails', async () => {
     const runCommand = makeRunCommand([
       { stdout: '', exitCode: 1 },               // pnpm install fails
-      { stdout: '', exitCode: 1 },               // verify fails
     ]);
 
     const result = await installClaudeCode(runCommand, () => {}, (t: string) => logger.log(t));
     expect(result.success).toBe(false);
+  });
+
+  it('should succeed even if version check fails after install', async () => {
+    const runCommand = makeRunCommand([
+      { stdout: '', exitCode: 0 },               // pnpm install succeeds
+      { stdout: '', exitCode: 1, stderr: 'incompatible Windows version' },  // verify fails
+    ]);
+
+    const result = await installClaudeCode(runCommand, () => {}, (t: string) => logger.log(t));
+    expect(result.success).toBe(true);
+    expect(result.version).toBe('installed');
   });
 
   it('should report progress during install', async () => {

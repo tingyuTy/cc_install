@@ -7,6 +7,16 @@ export interface RunCommandResult {
   exitCode: number;
 }
 
+// Windows CJK consoles may output GBK; try UTF-8 first, fall back to common CJK encodings
+function decodeBuffer(buf: Buffer): string {
+  const utf8 = buf.toString('utf-8');
+  // Quick check: if it contains replacement chars, try GBK
+  if (utf8.includes('�')) {
+    try { return buf.toString('gbk'); } catch (_) { /* ignore */ }
+  }
+  return utf8;
+}
+
 export function createRunCommand(logger: GlobalLogger) {
   return function runCommand(
     cmd: string,
@@ -26,20 +36,21 @@ export function createRunCommand(logger: GlobalLogger) {
       let stderr = '';
 
       child.stdout.on('data', (data: Buffer) => {
-        const text = data.toString();
+        const text = decodeBuffer(data);
         stdout += text;
-        text.split('\n').filter(Boolean).forEach((line) => logger.log(line));
+        if (text.trim()) logger.log(text.trim());
       });
 
       child.stderr.on('data', (data: Buffer) => {
-        const text = data.toString();
+        const text = decodeBuffer(data);
         stderr += text;
-        text.split('\n').filter(Boolean).forEach((line) => logger.log(line));
+        if (text.trim()) logger.log(text.trim());
       });
 
       child.on('close', (code) => {
         const exitCode = code ?? 1;
-        logger.log(`命令完成，退出码: ${exitCode}`);
+        const status = exitCode === 0 ? '成功' : '失败';
+        logger.log(`命令完成，退出码: ${exitCode} (${status})`);
         resolve({ stdout, stderr, exitCode });
       });
 
