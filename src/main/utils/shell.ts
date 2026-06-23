@@ -12,7 +12,7 @@ function decodeBuffer(buf: Buffer): string {
   const utf8 = buf.toString('utf-8');
   // Quick check: if it contains replacement chars, try GBK
   if (utf8.includes('�')) {
-    try { return buf.toString('gbk'); } catch (_) { /* ignore */ }
+    try { return (buf as any).toString('gbk'); } catch (_) { /* ignore */ }
   }
   return utf8;
 }

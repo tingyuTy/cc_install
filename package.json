@@ -1,8 +1,8 @@
 {
   "//": "中国大陆网络环境安装需设置 ELECTRON_MIRROR:  ELECTRON_MIRROR=\"https://npmmirror.com/mirrors/electron/\" pnpm install",
-  "name": "cc-installer",
+  "name": "claude-code-guide",
   "version": "1.0.0",
-  "description": "一键安装 Claude Code 的跨平台桌面工具",
+  "description": "claudeCode引导 - 一键安装 Claude Code",
   "main": "dist/main/index.js",
   "scripts": {
     "dev": "tsc && node -e \"require('fs').cpSync('src/renderer','dist/renderer',{recursive:true})\" && electron .",

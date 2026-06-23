@@ -28,7 +28,7 @@ function createWindow(): void {
     width: 720,
     height: 580,
     resizable: false,
-    title: 'Claude Code Installer',
+    title: 'claudeCode引导',
     icon: join(__dirname, '../../assets/icon.png'),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),

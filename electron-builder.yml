@@ -1,5 +1,5 @@
 appId: com.ccinstaller.app
-productName: Claude Code Installer
+productName: claudeCode引导
 directories:
   output: release
   buildResources: assets
@@ -8,7 +8,7 @@ mac:
   target:
     - dmg
     - zip
-  artifactName: cc-installer-${version}-mac.${ext}
+  artifactName: claudeCode引导-${version}-mac.${ext}
   icon: assets/icon.png
 
 dmg:
@@ -17,7 +17,7 @@ dmg:
 win:
   target:
     - zip
-  artifactName: cc-installer-${version}-win.${ext}
+  artifactName: claudeCode引导-${version}-win.${ext}
   icon: assets/icon.png
   sign: null
 
