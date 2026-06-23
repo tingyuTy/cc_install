@@ -43,12 +43,10 @@ pnpm dev
 ## 构建
 
 ```bash
-# macOS
 pnpm build
-
-# Windows
-node scripts/build.js win32
 ```
+
+macOS / Windows 通用，构建脚本会自动检测平台。
 
 构建产物输出到 `release/` 目录：
 
