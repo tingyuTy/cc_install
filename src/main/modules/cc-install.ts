@@ -7,7 +7,7 @@ export async function installClaudeCode(
 ): Promise<{ success: boolean; version: string; warning?: string }> {
   // Log OS info and check compatibility
   const osInfo = getOSInfo();
-  onLog(`操作系统: ${osInfo.name}`);
+  onLog(`操作系统: ${osInfo.name} (${osInfo.arch})`);
   onLog(`系统版本: ${osInfo.version}`);
 
   const compat = checkClaudeCodeCompatibility();

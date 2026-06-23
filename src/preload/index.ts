@@ -20,7 +20,7 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.invoke('generate-config', { apiKey, baseUrl }),
 
   // OS info
-  getOSInfo: (): Promise<{ platform: string; version: string; build: number; name: string }> =>
+  getOSInfo: (): Promise<{ platform: string; version: string; build: number; name: string; arch: string }> =>
     ipcRenderer.invoke('get-os-info'),
 
   // Uninstall

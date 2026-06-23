@@ -7,9 +7,10 @@ export function getPlatform(): 'darwin' | 'win32' {
 }
 
 /** Get OS info for compatibility checking */
-export function getOSInfo(): { platform: string; version: string; build: number; name: string } {
+export function getOSInfo(): { platform: string; version: string; build: number; name: string; arch: string } {
   const platform = getPlatform();
   const version = release();
+  const arch = getArch();
   let build = 0;
   let name = platform === 'darwin' ? 'macOS' : 'Windows';
 
@@ -22,7 +23,7 @@ export function getOSInfo(): { platform: string; version: string; build: number;
     else name = `Windows (build ${build})`;
   }
 
-  return { platform, version, build, name };
+  return { platform, version, build, name, arch };
 }
 
 /**
@@ -56,11 +57,21 @@ export function checkClaudeCodeCompatibility(): { compatible: boolean; warning: 
   return { compatible: true, warning: null };
 }
 
+/** Get CPU architecture for Node.js download */
+export function getArch(): string {
+  // process.arch: 'x64', 'arm64', 'ia32'
+  const arch = process.arch;
+  if (arch === 'arm64') return 'arm64';
+  if (arch === 'x64') return 'x64';
+  return 'x86'; // ia32 or other 32-bit
+}
+
 export function getNodeDownloadUrl(version: string): string {
   const platform = getPlatform();
+  const arch = getArch();
   const ext = platform === 'darwin' ? 'pkg' : 'msi';
   const osName = platform === 'darwin' ? 'darwin' : 'win';
-  return `https://nodejs.org/dist/${version}/node-${version}-${osName}-x64.${ext}`;
+  return `https://nodejs.org/dist/${version}/node-${version}-${osName}-${arch}.${ext}`;
 }
 
 export function getNodeInstallCommand(pkgPath: string): {
