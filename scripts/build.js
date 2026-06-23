@@ -42,5 +42,14 @@ copyDir('src/renderer', 'dist/renderer');
 const buildTarget = platform === 'darwin' ? '--mac' : '--win';
 run(`npx electron-builder ${buildTarget}`);
 
+// Remove unused blockmap files (no auto-update in v1)
+const { readdirSync: ls, unlinkSync: rm } = require('fs');
+const releaseDir = join(__dirname, '..', 'release');
+if (existsSync(releaseDir)) {
+  for (const f of ls(releaseDir)) {
+    if (f.endsWith('.blockmap')) rm(join(releaseDir, f));
+  }
+}
+
 console.log('\n✅ Build complete!');
 console.log('Output in: release/');

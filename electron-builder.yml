@@ -11,6 +11,9 @@ mac:
   artifactName: cc-installer-${version}-mac.${ext}
   icon: assets/icon.png
 
+dmg:
+  writeUpdateInfo: false
+
 win:
   target:
     - nsis
@@ -21,6 +24,7 @@ win:
 nsis:
   oneClick: false
   allowToChangeInstallationDirectory: true
+  differentialPackage: false
 
 files:
   - dist/**/*
