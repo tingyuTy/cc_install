@@ -2,9 +2,16 @@ const { execSync } = require('child_process');
 const { existsSync, mkdirSync, readdirSync, copyFileSync, rmSync } = require('fs');
 const { join } = require('path');
 
+// Use Chinese mirror for Electron downloads (uncomment for mainland China)
+const USE_MIRROR = true;
+const mirrorEnv = USE_MIRROR ? {
+  ELECTRON_MIRROR: 'https://npmmirror.com/mirrors/electron/',
+  ELECTRON_BUILDER_BINARIES_MIRROR: 'https://npmmirror.com/mirrors/electron-builder-binaries/',
+} : {};
+
 function run(cmd) {
   console.log(`\n> ${cmd}`);
-  execSync(cmd, { stdio: 'inherit' });
+  execSync(cmd, { stdio: 'inherit', env: { ...process.env, ...mirrorEnv } });
 }
 
 function copyDir(src, dest) {
