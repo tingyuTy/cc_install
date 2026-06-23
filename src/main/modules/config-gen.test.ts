@@ -2,56 +2,55 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { generateConfig } from './config-gen';
 import { GlobalLogger } from '../logger';
 import { join } from 'path';
-import { tmpdir } from 'os';
-import { readFileSync, unlinkSync, existsSync } from 'fs';
+import { homedir } from 'os';
+import { readFileSync, unlinkSync, existsSync, rmdirSync } from 'fs';
 
 describe('config-gen', () => {
   const logger = new GlobalLogger();
-  const testConfigPath = join(tmpdir(), `test-claude-${Date.now()}.json`);
+  const home = homedir();
+  const claudeJson = join(home, '.claude.json');
+  const settingsJson = join(home, '.claude', 'settings.json');
 
   afterEach(() => {
-    if (existsSync(testConfigPath)) unlinkSync(testConfigPath);
+    if (existsSync(claudeJson)) unlinkSync(claudeJson);
+    if (existsSync(settingsJson)) unlinkSync(settingsJson);
+    try { rmdirSync(join(home, '.claude')); } catch (_) { /* ok if not empty */ }
   });
 
-  it('should generate valid JSON config with apiKey', async () => {
-    const result = await generateConfig('sk-test-key-123', testConfigPath, logger);
+  it('should write ~/.claude.json with onboarding bypass', async () => {
+    const result = await generateConfig('sk-test-key-123', '', logger);
 
     expect(result.success).toBe(true);
-    expect(result.filePath).toBe(testConfigPath);
-    expect(existsSync(testConfigPath)).toBe(true);
-
-    const content = JSON.parse(readFileSync(testConfigPath, 'utf-8'));
-    expect(content.apiKey).toBe('sk-test-key-123');
-    expect(content.model).toBeDefined();
+    expect(existsSync(claudeJson)).toBe(true);
+    const content = JSON.parse(readFileSync(claudeJson, 'utf-8'));
+    expect(content.hasCompletedOnboarding).toBe(true);
   });
 
-  it('should use default DeepSeek base URL when not provided', async () => {
-    const result = await generateConfig('sk-key', testConfigPath, logger);
+  it('should write ~/.claude/settings.json with DeepSeek env vars', async () => {
+    const result = await generateConfig('sk-key', '', logger);
     expect(result.success).toBe(true);
+    expect(existsSync(settingsJson)).toBe(true);
 
-    const content = JSON.parse(readFileSync(testConfigPath, 'utf-8'));
-    expect(content.baseUrl).toBe('https://api.deepseek.com');
+    const content = JSON.parse(readFileSync(settingsJson, 'utf-8'));
+    expect(content.env.ANTHROPIC_BASE_URL).toBe('https://api.deepseek.com/anthropic');
+    expect(content.env.ANTHROPIC_AUTH_TOKEN).toBe('sk-key');
+    expect(content.env.ANTHROPIC_MODEL).toBe('deepseek-chat');
+    expect(content.env.ANTHROPIC_DEFAULT_SONNET_MODEL).toBe('deepseek-chat');
+    expect(content.env.ANTHROPIC_DEFAULT_OPUS_MODEL).toBe('deepseek-reasoner');
+    expect(content.env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC).toBe('1');
   });
 
   it('should use custom base URL when provided', async () => {
-    const result = await generateConfig('sk-key', testConfigPath, logger, 'https://custom.api.com');
+    const result = await generateConfig('sk-key', '', logger, 'https://custom.api.com/anthropic');
     expect(result.success).toBe(true);
 
-    const content = JSON.parse(readFileSync(testConfigPath, 'utf-8'));
-    expect(content.baseUrl).toBe('https://custom.api.com');
+    const content = JSON.parse(readFileSync(settingsJson, 'utf-8'));
+    expect(content.env.ANTHROPIC_BASE_URL).toBe('https://custom.api.com/anthropic');
   });
 
   it('should fail with empty apiKey', async () => {
-    const result = await generateConfig('', testConfigPath, logger);
+    const result = await generateConfig('', '', logger);
     expect(result.success).toBe(false);
     expect(result.message).toContain('API Key 不能为空');
-  });
-
-  it('should write model as deepseek-chat', async () => {
-    const result = await generateConfig('sk-key', testConfigPath, logger);
-    expect(result.success).toBe(true);
-
-    const content = JSON.parse(readFileSync(testConfigPath, 'utf-8'));
-    expect(content.model).toBe('deepseek-chat');
   });
 });

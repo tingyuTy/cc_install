@@ -9,7 +9,7 @@ Steps[5] = {
         </div>
         <div class="form-group">
           <label>API Base URL (可选)</label>
-          <input type="text" id="base-url-input" placeholder="https://api.deepseek.com">
+          <input type="text" id="base-url-input" placeholder="https://api.deepseek.com/anthropic">
         </div>
         <div id="config-result" style="font-size:13px; margin-top:12px;"></div>
       </div>
