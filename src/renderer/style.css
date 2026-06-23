@@ -89,6 +89,8 @@ footer {
 .btn-retry:hover { background: #f57c00; }
 .btn-skip { background: #555; border-color: #555; }
 .btn-skip:hover { background: #666; }
+.btn-uninstall { background: #8B0000; border-color: #8B0000; color: #fff; }
+.btn-uninstall:hover { background: #A00000; }
 
 /* Toast */
 .toast {

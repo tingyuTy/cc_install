@@ -7,6 +7,8 @@ import { installNode } from './modules/node-install';
 import { installPnpm } from './modules/pnpm-install';
 import { installClaudeCode } from './modules/cc-install';
 import { generateConfig } from './modules/config-gen';
+import { uninstallClaudeCode } from './modules/cc-uninstall';
+import { getOSInfo } from './utils/platform';
 import { join } from 'path';
 import { homedir } from 'os';
 import { writeFileSync } from 'fs';
@@ -104,6 +106,27 @@ export function registerIpcHandlers(logger: GlobalLogger): void {
       percent: result.success ? 100 : 0,
       message: result.message,
     });
+    return result;
+  });
+
+  // OS info
+  ipcMain.handle('get-os-info', async () => {
+    return getOSInfo();
+  });
+
+  // uninstall Claude Code
+  ipcMain.handle('uninstall-claude-code', async () => {
+    const win = BrowserWindow.getFocusedWindow();
+    const sendProgress = (percent: number, message: string) => {
+      win?.webContents.send('install-progress', { step: 6, percent, message });
+    };
+    const sendLog = (text: string) => {
+      logger.log(text);
+      const entry = logger.getLogs()[logger.getLogs().length - 1];
+      win?.webContents.send('install-log', entry);
+    };
+
+    const result = await uninstallClaudeCode(runCommand, sendProgress, sendLog);
     return result;
   });
 

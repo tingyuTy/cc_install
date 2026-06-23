@@ -19,6 +19,14 @@ contextBridge.exposeInMainWorld('api', {
   generateConfig: (apiKey: string, baseUrl?: string): Promise<{ success: boolean; filePath: string; message: string }> =>
     ipcRenderer.invoke('generate-config', { apiKey, baseUrl }),
 
+  // OS info
+  getOSInfo: (): Promise<{ platform: string; version: string; build: number; name: string }> =>
+    ipcRenderer.invoke('get-os-info'),
+
+  // Uninstall
+  uninstallClaudeCode: (): Promise<{ success: boolean; message: string }> =>
+    ipcRenderer.invoke('uninstall-claude-code'),
+
   // Log export
   exportLogs: (): Promise<void> =>
     ipcRenderer.invoke('export-logs'),

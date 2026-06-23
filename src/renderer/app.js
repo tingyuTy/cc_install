@@ -16,6 +16,7 @@ const AppState = {
     document.getElementById('prev-btn').addEventListener('click', () => this.goPrev());
     document.getElementById('retry-btn').addEventListener('click', () => this.retry());
     document.getElementById('skip-btn').addEventListener('click', () => this.skip());
+    document.getElementById('uninstall-btn').addEventListener('click', () => this.uninstall());
 
     // Log panel toggle
     document.getElementById('log-toggle').addEventListener('click', () => {
@@ -113,6 +114,32 @@ const AppState = {
     this.goNext();
   },
 
+  async uninstall() {
+    const confirmed = confirm('确定要卸载 Claude Code 吗？此操作不可撤销。');
+    if (!confirmed) return;
+
+    this.isInstalling = true;
+    this.updateButtons();
+    window.api.setCloseGuard('卸载未完成，确定退出吗？');
+
+    const result = await window.api.uninstallClaudeCode();
+    this.isInstalling = false;
+    this.updateButtons();
+    window.api.clearCloseGuard();
+
+    const toast = document.getElementById('error-toast');
+    if (result.success) {
+      toast.textContent = '✓ ' + result.message;
+      toast.style.background = '#2E7D32';
+      toast.style.display = 'block';
+    } else {
+      toast.textContent = '✗ ' + result.message;
+      toast.style.background = '#c62828';
+      toast.style.display = 'block';
+    }
+    setTimeout(() => { toast.style.display = 'none'; }, 6000);
+  },
+
   renderStep(stepNum) {
     this.currentStep = stepNum;
     this.updateStepIndicator();
@@ -143,10 +170,14 @@ const AppState = {
     const nextBtn = document.getElementById('next-btn');
     const retryBtn = document.getElementById('retry-btn');
     const skipBtn = document.getElementById('skip-btn');
+    const uninstallBtn = document.getElementById('uninstall-btn');
 
     prevBtn.disabled = this.currentStep === 1 || this.isInstalling;
     nextBtn.disabled = this.isInstalling;
     nextBtn.textContent = this.currentStep === this.totalSteps ? '完成' : '下一步';
+
+    // Show uninstall button on Claude Code install step
+    uninstallBtn.style.display = this.currentStep === 4 && !this.isInstalling ? '' : 'none';
 
     if (!this.errorInfo) {
       retryBtn.style.display = 'none';
