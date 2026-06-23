@@ -1,42 +1,4 @@
 {
   "version": "2.13",
-  "children": [
-    {
-      "type": "rectangle",
-      "cornerRadius": 100,
-      "id": "B0DEq",
-      "x": 0,
-      "y": 0,
-      "name": "App Icon",
-      "fill": {
-        "type": "gradient",
-        "gradientType": "linear",
-        "enabled": true,
-        "rotation": 160,
-        "size": {
-          "height": 1
-        },
-        "colors": [
-          {
-            "color": "#0D1117",
-            "position": 0
-          },
-          {
-            "color": "#1B1F3B",
-            "position": 0.4
-          },
-          {
-            "color": "#1A237E",
-            "position": 0.7
-          },
-          {
-            "color": "#0D47A1",
-            "position": 1
-          }
-        ]
-      },
-      "width": 512,
-      "height": 512
-    }
-  ]
+  "children": []
 }
