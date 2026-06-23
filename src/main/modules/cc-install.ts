@@ -53,8 +53,9 @@ export async function installClaudeCode(
       claudeBin = join(npmDir, 'claude.cmd');
       onLog(`Claude Code 安装位置: ${npmDir}`);
 
-      // Read PERMANENT user PATH from registry and ensure npm bin is in it
+      // Add npm global bin to user PATH — always write, don't guess
       onLog('正在配置系统 PATH...');
+      // Read registry PATH first
       const regResult = await runCommand('reg', [
         'query', 'HKCU\\Environment',
         '/v', 'Path',
@@ -65,26 +66,19 @@ export async function installClaudeCode(
         if (match) existingUserPath = match[1].trim();
       }
 
-      // Expand any %VAR% references in the registry PATH for comparison
-      const expandedRegPath = existingUserPath
-        .replace(/%APPDATA%/gi, process.env.APPDATA || '')
-        .replace(/%USERPROFILE%/gi, process.env.USERPROFILE || '')
-        .replace(/%LOCALAPPDATA%/gi, process.env.LOCALAPPDATA || '')
-        .toLowerCase();
-
-      if (!expandedRegPath.includes(npmDir.toLowerCase())) {
-        onLog(`将 npm 全局路径添加到用户 PATH: ${npmDir}`);
-        const newPath = existingUserPath
-          ? `${existingUserPath};${npmDir}`
-          : npmDir;
-        const setxResult = await runCommand('setx', ['Path', newPath]);
-        if (setxResult.exitCode === 0) {
-          onLog('已成功添加到用户 PATH（新命令行窗口生效）');
-        } else {
-          onLog(`PATH 设置失败: ${setxResult.stderr}`);
-        }
+      // Always use the npmDir in PATH — if already present, setx is harmless
+      // Use the raw directory path (not %VAR%) for reliability
+      const newPath = existingUserPath
+        ? `${existingUserPath};${npmDir}`
+        : npmDir;
+      onLog(`写入用户 PATH: ${npmDir}`);
+      const setxResult = await runCommand('setx', ['Path', newPath]);
+      if (setxResult.exitCode === 0) {
+        onLog('已添加到用户 PATH（新命令行窗口生效）');
+        // Also update current process PATH so verification works immediately
+        process.env.PATH = `${process.env.PATH};${npmDir}`;
       } else {
-        onLog('npm 全局路径已在用户 PATH 中，无需重复添加');
+        onLog(`PATH 写入失败: ${setxResult.stderr}`);
       }
     }
   }
