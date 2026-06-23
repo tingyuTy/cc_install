@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'">
+  <title>Claude Code Installer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>🖥️ Claude Code Installer</h1>
+      <div class="step-indicator" id="step-indicator">
+        <span class="step" data-step="1">1. 环境检测</span>
+        <span class="step-arrow">→</span>
+        <span class="step" data-step="2">2. Node.js</span>
+        <span class="step-arrow">→</span>
+        <span class="step" data-step="3">3. pnpm</span>
+        <span class="step-arrow">→</span>
+        <span class="step" data-step="4">4. Claude Code</span>
+        <span class="step-arrow">→</span>
+        <span class="step" data-step="5">5. 配置</span>
+      </div>
+    </header>
+
+    <main id="step-content">
+      <!-- Steps render here -->
+    </main>
+
+    <div class="log-panel" id="log-panel">
+      <div class="log-header" id="log-toggle">
+        <span>▼ 详细日志</span>
+        <button id="export-btn" title="导出日志">📋 导出日志</button>
+      </div>
+      <div class="log-body" id="log-body">
+        <div id="log-entries"></div>
+      </div>
+    </div>
+
+    <footer>
+      <button id="prev-btn" class="btn" disabled>上一步</button>
+      <button id="next-btn" class="btn btn-primary">下一步</button>
+      <button id="retry-btn" class="btn btn-retry" style="display:none">重试</button>
+      <button id="skip-btn" class="btn btn-skip" style="display:none">跳过</button>
+    </footer>
+
+    <div id="error-toast" class="toast error-toast" style="display:none"></div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="steps/step1-check.js"></script>
+  <script src="steps/step2-node.js"></script>
+  <script src="steps/step3-pnpm.js"></script>
+  <script src="steps/step4-cc.js"></script>
+  <script src="steps/step5-config.js"></script>
+</body>
+</html>
