@@ -1,13 +1,18 @@
+import { getPlatform } from '../utils/platform';
+
 export async function uninstallClaudeCode(
   runCommand: (cmd: string, args: string[]) => Promise<{ stdout: string; stderr: string; exitCode: number }>,
   onProgress: (percent: number, message: string) => void,
   onLog: (text: string) => void
 ): Promise<{ success: boolean; message: string }> {
+  const isWindows = getPlatform() === 'win32';
+  const cmd = isWindows ? 'npm' : 'pnpm';
+
   onLog('开始卸载 Claude Code...');
-  onLog('执行: pnpm uninstall -g @anthropic-ai/claude-code');
+  onLog(`执行: ${cmd} uninstall -g @anthropic-ai/claude-code`);
   onProgress(20, '正在卸载 Claude Code...');
 
-  const result = await runCommand('pnpm', [
+  const result = await runCommand(cmd, [
     'uninstall',
     '-g',
     '@anthropic-ai/claude-code',
@@ -18,7 +23,7 @@ export async function uninstallClaudeCode(
   }
 
   if (result.exitCode !== 0) {
-    const msg = `卸载失败，pnpm 退出码: ${result.exitCode}`;
+    const msg = `卸载失败，${cmd} 退出码: ${result.exitCode}`;
     onLog(msg);
     if (result.stderr.trim()) {
       onLog(`错误详情: ${result.stderr.trim()}`);
