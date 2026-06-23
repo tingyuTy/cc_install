@@ -44,17 +44,42 @@ export async function installClaudeCode(
 
   onLog(`${installCmd} 安装命令执行成功`);
 
-  // Find the actual claude binary location
+  // Find the actual claude binary location and add to PATH on Windows
   let claudeBin = 'claude';
   if (isWindows) {
     const npmPrefix = await runCommand('npm', ['prefix', '-g']);
     if (npmPrefix.exitCode === 0) {
       const npmDir = npmPrefix.stdout.trim();
-      // npm global bin is at <prefix>/ on Unix, <prefix>/ on Windows (npm puts it in the same prefix dir)
-      // Actually npm on Windows puts binaries in <prefix>/ (which is %APPDATA%/npm)
-      const candidate = join(npmDir, 'claude.cmd');
-      claudeBin = candidate;
+      claudeBin = join(npmDir, 'claude.cmd');
       onLog(`Claude Code 安装位置: ${npmDir}`);
+
+      // Check if npm bin path is already in PATH
+      const currentPath = process.env.PATH || '';
+      if (!currentPath.toLowerCase().includes(npmDir.toLowerCase())) {
+        onLog('将 npm 全局路径添加到系统 PATH...');
+        // Use setx to append to user PATH (no admin needed)
+        // We read current user PATH first to avoid truncation
+        const regResult = await runCommand('reg', [
+          'query', 'HKCU\\Environment',
+          '/v', 'Path',
+        ]);
+        let existingUserPath = '';
+        if (regResult.exitCode === 0) {
+          const match = regResult.stdout.match(/Path\s+REG_\w+\s+(.+)/);
+          if (match) existingUserPath = match[1].trim();
+        }
+        const newPath = existingUserPath
+          ? `${existingUserPath};${npmDir}`
+          : npmDir;
+        const setxResult = await runCommand('setx', ['Path', newPath]);
+        if (setxResult.exitCode === 0) {
+          onLog(`已添加: ${npmDir} → 用户 PATH（新命令行窗口生效）`);
+        } else {
+          onLog(`PATH 设置失败: ${setxResult.stderr}`);
+        }
+      } else {
+        onLog('npm 全局路径已在 PATH 中');
+      }
     }
   }
 
