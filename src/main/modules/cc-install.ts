@@ -53,32 +53,32 @@ export async function installClaudeCode(
       claudeBin = join(npmDir, 'claude.cmd');
       onLog(`Claude Code 安装位置: ${npmDir}`);
 
-      // Check if npm bin path is already in PATH
-      const currentPath = process.env.PATH || '';
-      if (!currentPath.toLowerCase().includes(npmDir.toLowerCase())) {
-        onLog('将 npm 全局路径添加到系统 PATH...');
-        // Use setx to append to user PATH (no admin needed)
-        // We read current user PATH first to avoid truncation
-        const regResult = await runCommand('reg', [
-          'query', 'HKCU\\Environment',
-          '/v', 'Path',
-        ]);
-        let existingUserPath = '';
-        if (regResult.exitCode === 0) {
-          const match = regResult.stdout.match(/Path\s+REG_\w+\s+(.+)/);
-          if (match) existingUserPath = match[1].trim();
-        }
+      // Read PERMANENT user PATH from registry (not process.env which may be temporary)
+      onLog('正在配置系统 PATH...');
+      const regResult = await runCommand('reg', [
+        'query', 'HKCU\\Environment',
+        '/v', 'Path',
+      ]);
+      let existingUserPath = '';
+      if (regResult.exitCode === 0) {
+        const match = regResult.stdout.match(/Path\s+REG_\w+\s+(.+)/);
+        if (match) existingUserPath = match[1].trim();
+      }
+
+      // Check if npmDir is already in the permanent registry PATH (case-insensitive on Windows)
+      if (!existingUserPath.toLowerCase().includes(npmDir.toLowerCase())) {
+        onLog(`将 npm 全局路径添加到用户 PATH: ${npmDir}`);
         const newPath = existingUserPath
           ? `${existingUserPath};${npmDir}`
           : npmDir;
         const setxResult = await runCommand('setx', ['Path', newPath]);
         if (setxResult.exitCode === 0) {
-          onLog(`已添加: ${npmDir} → 用户 PATH（新命令行窗口生效）`);
+          onLog('已成功添加到用户 PATH（新命令行窗口生效）');
         } else {
           onLog(`PATH 设置失败: ${setxResult.stderr}`);
         }
       } else {
-        onLog('npm 全局路径已在 PATH 中');
+        onLog('npm 全局路径已在用户 PATH 中，无需重复添加');
       }
     }
   }
@@ -134,10 +134,6 @@ export async function installClaudeCode(
   if (version) {
     onLog(`Claude Code ${version} 安装成功 ✓`);
     onProgress(100, `Claude Code ${version} 安装成功 ✓`);
-    if (isWindows) {
-      onLog('提示: 如果在命令行中找不到 claude 命令，请将以下路径添加到系统 PATH:');
-      onLog(`  %APPDATA%\\npm`);
-    }
   } else {
     onLog('Claude Code 安装完成（文件已安装）');
 
