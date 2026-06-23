@@ -16,7 +16,6 @@ dmg:
 
 win:
   target:
-    - nsis
     - zip
   artifactName: cc-installer-${version}-win.${ext}
   icon: assets/icon.png
