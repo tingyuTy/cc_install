@@ -16,15 +16,18 @@ export async function installClaudeCode(
     compat.warning.split('\n').forEach((line) => onLog(`  ${line}`));
   }
 
-  onLog('开始安装 Claude Code...');
-  onLog('执行: pnpm install -g @anthropic-ai/claude-code');
-  onProgress(10, '正在通过 pnpm 安装 Claude Code（可能需要几分钟）...');
+  // Windows: use npm (official recommendation); macOS: use pnpm
+  const isWindows = osInfo.platform === 'win32';
+  const installCmd = isWindows ? 'npm' : 'pnpm';
+  const installArgs = isWindows
+    ? ['install', '-g', '--registry', 'https://registry.npmmirror.com', '@anthropic-ai/claude-code']
+    : ['install', '-g', '@anthropic-ai/claude-code'];
 
-  const installResult = await runCommand('pnpm', [
-    'install',
-    '-g',
-    '@anthropic-ai/claude-code',
-  ]);
+  onLog('开始安装 Claude Code...');
+  onLog(`执行: ${installCmd} ${installArgs.join(' ')}`);
+  onProgress(10, `正在通过 ${installCmd} 安装 Claude Code（可能需要几分钟）...`);
+
+  const installResult = await runCommand(installCmd, installArgs);
 
   // Log stdout summary
   if (installResult.stdout.trim()) {
@@ -39,7 +42,7 @@ export async function installClaudeCode(
     return { success: false, version: '' };
   }
 
-  onLog('pnpm 安装命令执行成功');
+  onLog(`${installCmd} 安装命令执行成功`);
   onProgress(80, '正在验证安装结果...');
 
   // Try to detect the installed version
@@ -92,7 +95,7 @@ export async function installClaudeCode(
       onLog('  1. 升级到 Windows 11');
       onLog('  2. 安装 WSL2 (Windows Subsystem for Linux)');
       onLog('     管理员 PowerShell 运行: wsl --install');
-      onLog('     然后在 WSL 终端中运行: pnpm install -g @anthropic-ai/claude-code');
+      onLog('     然后在 WSL 终端中运行: npm install -g @anthropic-ai/claude-code');
       onLog('=================================================================');
     } else if (claudeError) {
       onLog('注意: Claude Code 可能无法在当前系统上运行');
