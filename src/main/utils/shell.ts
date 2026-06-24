@@ -17,7 +17,7 @@ function decodeBuffer(buf: Buffer): string {
   return utf8;
 }
 
-export function createRunCommand(logger: GlobalLogger) {
+export function createRunCommand(logger: GlobalLogger, useShell = true) {
   return function runCommand(
     cmd: string,
     args: string[],
@@ -27,9 +27,14 @@ export function createRunCommand(logger: GlobalLogger) {
     logger.log(`执行命令: ${commandStr}`);
 
     return new Promise((resolve) => {
+      // Use shell on macOS/Win: GUI apps don't inherit shell PATH
+      const shell = useShell
+        ? (process.platform === 'win32' ? true : '/bin/zsh')
+        : false;
       const child = spawn(cmd, args, {
         cwd: opts?.cwd,
-        shell: process.platform === 'win32',
+        shell,
+        env: { ...process.env, HOME: process.env.HOME },
       });
 
       let stdout = '';
