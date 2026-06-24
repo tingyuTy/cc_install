@@ -66,7 +66,7 @@ macOS / Windows 通用，构建脚本会自动检测平台。
 
 | 环境检测 | 安装 Claude Code | 配置 DeepSeek |
 |---------|-----------------|---------------|
-| ![环境检测](docs/img/环境检测.png) | ![CC安装](docs/img/cc%20安装.png) | ![DS配置](docs/img/DsV4%20配置.png) |
+| ![环境检测](docs/img/env-check.png) | ![CC安装](docs/img/cc-install.png) | ![DS配置](docs/img/deepseek-config.png) |
 
 ## 参考资源
 
