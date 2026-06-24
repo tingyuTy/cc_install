@@ -165,6 +165,16 @@ cc_install/
 
 ---
 
+## 支持与联系
+
+**请我喝咖啡 ☕**
+
+![赞赏](docs/img/donate.jpg)
+
+**联系开发者 💬**
+
+![微信](docs/img/contact.jpg)
+
 ## License
 
 MIT
