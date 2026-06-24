@@ -6,13 +6,13 @@ directories:
 
 asar: true
 asarUnpack: []
-compression: maximum
+compression: normal
 
 mac:
   target:
     - dmg
     - zip
-  artifactName: claudeCode引导-${version}-mac.${ext}
+  artifactName: claudeCodeSetup-${version}-mac.${ext}
   icon: assets/icon.png
 
 dmg:
@@ -21,7 +21,7 @@ dmg:
 win:
   target:
     - zip
-  artifactName: claudeCode引导-${version}-win.${ext}
+  artifactName: claudeCodeSetup-${version}-win.${ext}
   icon: assets/icon.png
   sign: null
 
