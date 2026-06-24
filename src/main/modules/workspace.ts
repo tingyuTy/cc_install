@@ -1,5 +1,5 @@
-import { dialog, BrowserWindow, shell } from 'electron';
-import { spawn } from 'child_process';
+import { dialog, BrowserWindow } from 'electron';
+import { spawn, exec } from 'child_process';
 import { getPlatform } from '../utils/platform';
 
 /** Let user pick a workspace folder */
@@ -20,32 +20,29 @@ export async function pickWorkspaceFolder(): Promise<string | null> {
 }
 
 /** Open a new terminal window and run `claude` in the given folder */
-export function openTerminalWithClaude(workspaceFolder: string): void {
+export function openTerminalWithClaude(workspaceFolder: string): { success: boolean; error?: string } {
   const platform = getPlatform();
   const cwd = workspaceFolder;
 
-  if (platform === 'win32') {
-    // Windows: open cmd and run claude
-    spawn('cmd', ['/k', `cd /d "${cwd}" && claude`], {
-      detached: true,
-      stdio: 'ignore',
-      cwd,
-    }).unref();
-  } else {
-    // macOS: use osascript to tell Terminal to run claude
-    const script = `
-      tell application "Terminal"
-        activate
-        do script "cd ${escapeAppleScript(cwd)} && claude"
-      end tell
-    `;
-    spawn('osascript', ['-e', script], {
-      detached: true,
-      stdio: 'ignore',
-    }).unref();
+  try {
+    if (platform === 'win32') {
+      // Windows: use start to open a new cmd window
+      const cmd = `start "Claude Code" cmd /k "cd /d ${cwd} && claude"`;
+      exec(cmd, { cwd }, (err) => {
+        if (err) console.error('Failed to open terminal:', err.message);
+      });
+    } else {
+      // macOS: open Terminal and run claude
+      const escaped = cwd.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      const script = `tell application "Terminal" to do script "cd \\"${escaped}\\" && claude"`;
+      const child = spawn('osascript', ['-e', script], {
+        detached: true,
+        stdio: 'ignore',
+      });
+      child.unref();
+    }
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err.message };
   }
-}
-
-function escapeAppleScript(path: string): string {
-  return path.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
 }
