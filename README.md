@@ -62,6 +62,11 @@ macOS / Windows 通用，构建脚本会自动检测平台。
 3. 安装 Claude Code
 4. 输入 DeepSeek API Key，生成配置文件
 
+## 参考资源
+
+- [Claude Code 指令速查表](https://banwagong1.com/claude-code.html) — 在线版
+- `Claude Code 速查表.pdf` — 离线版（项目根目录）
+
 ## 项目结构
 
 ```
