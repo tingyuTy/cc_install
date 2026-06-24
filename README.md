@@ -62,6 +62,12 @@ macOS / Windows 通用，构建脚本会自动检测平台。
 3. 安装 Claude Code
 4. 输入 DeepSeek API Key，生成配置文件
 
+### 界面截图
+
+| 环境检测 | 安装 Claude Code | 配置 DeepSeek |
+|---------|-----------------|---------------|
+| ![环境检测](docs/img/环境检测.png) | ![CC安装](docs/img/cc%20安装.png) | ![DS配置](docs/img/DsV4%20配置.png) |
+
 ## 参考资源
 
 - [Claude Code 指令速查表](https://banwagong1.com/claude-code.html) — 在线版
