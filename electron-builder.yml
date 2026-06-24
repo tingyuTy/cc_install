@@ -4,6 +4,10 @@ directories:
   output: release
   buildResources: assets
 
+asar: true
+asarUnpack: []
+compression: maximum
+
 mac:
   target:
     - dmg
@@ -27,6 +31,12 @@ nsis:
   differentialPackage: false
 
 files:
-  - dist/**/*
+  - dist/**/*.js
+  - dist/**/*.html
+  - dist/**/*.css
   - assets/**/*
   - package.json
+  - "!dist/**/*.test.js"
+  - "!dist/**/*.test.d.ts"
+  - "!dist/**/*.js.map"
+  - "!dist/**/*.d.ts"

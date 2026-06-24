@@ -35,6 +35,21 @@ if (existsSync('release')) rmSync('release', { recursive: true });
 // Compile TypeScript
 run('npx tsc');
 
+// Strip test files, maps, and declarations from dist to reduce package size
+console.log('\n> Stripping dev files from dist...');
+function cleanDist(dir) {
+  if (!existsSync(dir)) return;
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const p = join(dir, entry.name);
+    if (entry.isDirectory()) { cleanDist(p); continue; }
+    if (entry.name.endsWith('.test.js') || entry.name.endsWith('.test.d.ts') ||
+        entry.name.endsWith('.js.map') || entry.name.endsWith('.d.ts')) {
+      rmSync(p);
+    }
+  }
+}
+cleanDist('dist');
+
 // Copy renderer files (HTML/CSS/JS are not compiled)
 console.log('\n> Copying renderer files...');
 copyDir('src/renderer', 'dist/renderer');
