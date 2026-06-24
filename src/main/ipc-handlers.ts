@@ -9,6 +9,7 @@ import { installClaudeCode } from './modules/cc-install';
 import { generateConfig } from './modules/config-gen';
 import { uninstallClaudeCode } from './modules/cc-uninstall';
 import { getOSInfo } from './utils/platform';
+import { pickWorkspaceFolder, openTerminalWithClaude } from './modules/workspace';
 import { join } from 'path';
 import { homedir } from 'os';
 import { writeFileSync } from 'fs';
@@ -128,6 +129,15 @@ export function registerIpcHandlers(logger: GlobalLogger): void {
 
     const result = await uninstallClaudeCode(runCommand, sendProgress, sendLog);
     return result;
+  });
+
+  // workspace — pick folder and launch Claude Code
+  ipcMain.handle('pick-workspace', async () => {
+    return await pickWorkspaceFolder();
+  });
+
+  ipcMain.handle('open-claude', async (_event, workspaceFolder: string) => {
+    openTerminalWithClaude(workspaceFolder);
   });
 
   // log export

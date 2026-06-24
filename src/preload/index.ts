@@ -27,6 +27,13 @@ contextBridge.exposeInMainWorld('api', {
   uninstallClaudeCode: (): Promise<{ success: boolean; message: string }> =>
     ipcRenderer.invoke('uninstall-claude-code'),
 
+  // Workspace
+  pickWorkspace: (): Promise<string | null> =>
+    ipcRenderer.invoke('pick-workspace'),
+
+  openClaude: (workspaceFolder: string): Promise<void> =>
+    ipcRenderer.invoke('open-claude', workspaceFolder),
+
   // Log export
   exportLogs: (): Promise<void> =>
     ipcRenderer.invoke('export-logs'),
