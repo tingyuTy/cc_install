@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="claudeCode引导 — 一键安装 Claude Code 的跨平台桌面工具。自动检测环境、安装 Node.js/pnpm、配置 DeepSeek 模型，让 AI 编程触手可及。">
+  <title>claudeCode引导 — Claude Code 一键安装工具</title>
+  <link rel="icon" href="../../assets/icon.png" type="image/png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ====== Nav ====== -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-brand">
+        <img src="../../assets/icon.png" alt="icon" width="32" height="32">
+        <span>claudeCode引导</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">功能</a></li>
+        <li><a href="#workflow">安装流程</a></li>
+        <li><a href="#screenshots">截图</a></li>
+        <li><a href="#download">下载</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="菜单">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ====== Hero ====== -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <img src="../../assets/icon.png" alt="claudeCode引导" class="hero-icon" width="96" height="96">
+      <h1>claudeCode引导</h1>
+      <p class="hero-tagline">Claude Code 一键安装，让 AI 编程触手可及</p>
+      <p class="hero-desc">无需命令行经验，5 步完成 Claude Code 安装与 DeepSeek 模型配置。<br>专为中国大陆网络环境优化，支持 macOS 和 Windows。</p>
+      <div class="hero-actions">
+        <a href="#download" class="btn-download btn-mac">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l3 3 3-3"/><path d="M12 15V3"/><rect x="2" y="8" width="20" height="12" rx="2"/></svg>
+          下载 macOS 版
+        </a>
+        <a href="#download" class="btn-download btn-win">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M6 7h12M6 11h12M6 15h8"/></svg>
+          下载 Windows 版
+        </a>
+      </div>
+      <p class="hero-version">v1.0.0 · 完全免费 · 开源软件</p>
+    </div>
+  </section>
+
+  <!-- ====== Intro ====== -->
+  <section id="intro">
+    <div class="container">
+      <div class="intro-grid">
+        <div class="intro-card problem">
+          <div class="intro-icon">😰</div>
+          <h3>安装太麻烦？</h3>
+          <p>需要装 Node.js、配 npm 源、装 Claude Code、写配置文件……命令行门槛高，网络还受限，折腾半天也不一定成功。</p>
+        </div>
+        <div class="intro-arrow">→</div>
+        <div class="intro-card solution">
+          <div class="intro-icon">🚀</div>
+          <h3>用 claudeCode引导</h3>
+          <p>打开应用 → 点"开始安装" → 填 API Key → 完成。<br>图形化向导，全自动配置，<strong>5 分钟搞定</strong>。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Features ====== -->
+  <section id="features">
+    <div class="container">
+      <h2 class="section-title">核心功能</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>环境检测</h3>
+          <p>自动检测 Node.js、pnpm、Claude Code 是否已安装，一目了然。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>一键安装</h3>
+          <p>Node.js → pnpm → Claude Code，全流程自动下载安装，无需手动操作。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>DeepSeek 配置</h3>
+          <p>图形化填入 API Key，自动写入 ~/.claude.json 和 settings.json，即装即用。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📁</div>
+          <h3>已装即用</h3>
+          <p>检测到 Claude Code 已安装时，直接选工作区文件夹，一键打开终端启动。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📋</div>
+          <h3>全流程日志</h3>
+          <p>每步操作实时日志，带时间戳，支持一键导出 txt 文件，排查问题不费劲。</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🪟</div>
+          <h3>Windows 优化</h3>
+          <p>自动配置系统 PATH、国内镜像加速、兼容性检测，Windows 用户也能顺畅安装。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Workflow ====== -->
+  <section id="workflow">
+    <div class="container">
+      <h2 class="section-title">安装流程</h2>
+      <p class="section-subtitle">5 步向导，轻松完成</p>
+      <div class="workflow-steps">
+        <div class="wf-step">
+          <div class="wf-num">1</div>
+          <div class="wf-content">
+            <h4>环境检测</h4>
+            <p>检测 Node.js / pnpm / Claude Code 是否已安装，显示当前系统信息</p>
+          </div>
+        </div>
+        <div class="wf-connector"></div>
+        <div class="wf-step">
+          <div class="wf-num">2</div>
+          <div class="wf-content">
+            <h4>安装 Node.js</h4>
+            <p>从官方源下载对应架构版本，静默安装；已有则自动跳过</p>
+          </div>
+        </div>
+        <div class="wf-connector"></div>
+        <div class="wf-step">
+          <div class="wf-num">3</div>
+          <div class="wf-content">
+            <h4>安装 pnpm</h4>
+            <p>通过 npm 全局安装 pnpm 包管理器；已有则自动跳过</p>
+          </div>
+        </div>
+        <div class="wf-connector"></div>
+        <div class="wf-step">
+          <div class="wf-num">4</div>
+          <div class="wf-content">
+            <h4>安装 Claude Code</h4>
+            <p>Windows 用 npm + 国内镜像，macOS 用 pnpm；支持卸载</p>
+          </div>
+        </div>
+        <div class="wf-connector"></div>
+        <div class="wf-step">
+          <div class="wf-num">5</div>
+          <div class="wf-content">
+            <h4>配置模型</h4>
+            <p>输入 DeepSeek API Key，可选自定义 Base URL，自动写入配置</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Screenshots ====== -->
+  <section id="screenshots">
+    <div class="container">
+      <h2 class="section-title">界面预览</h2>
+      <div class="screenshots-grid">
+        <div class="screenshot-card" data-full="../../docs/img/env-check.png">
+          <img src="../../docs/img/env-check.png" alt="环境检测" loading="lazy">
+          <p>Step 1 · 环境检测</p>
+        </div>
+        <div class="screenshot-card" data-full="../../docs/img/cc-install.png">
+          <img src="../../docs/img/cc-install.png" alt="安装 Claude Code" loading="lazy">
+          <p>Step 4 · 安装 Claude Code</p>
+        </div>
+        <div class="screenshot-card" data-full="../../docs/img/deepseek-config.png">
+          <img src="../../docs/img/deepseek-config.png" alt="配置 DeepSeek" loading="lazy">
+          <p>Step 5 · 配置 DeepSeek</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Download ====== -->
+  <section id="download">
+    <div class="container">
+      <h2 class="section-title">下载</h2>
+      <p class="section-subtitle">完全免费，开源软件 (MIT)</p>
+      <div class="download-grid">
+        <div class="download-card">
+          <div class="download-platform">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l3 3 3-3"/><path d="M12 15V3"/><rect x="2" y="8" width="20" height="12" rx="2"/></svg>
+            <h3>macOS</h3>
+          </div>
+          <p class="download-arch">Apple Silicon · Intel</p>
+          <p class="download-req">macOS 11 (Big Sur) 及以上</p>
+          <div class="download-actions">
+            <a href="../../release/claudeCode引导-1.0.0-mac.zip" class="btn-dl">下载 .zip 便携版</a>
+          </div>
+        </div>
+        <div class="download-card">
+          <div class="download-platform">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="18" rx="2"/><path d="M6 7h12M6 11h12M6 15h8"/></svg>
+            <h3>Windows</h3>
+          </div>
+          <p class="download-arch">x64 · ARM64</p>
+          <p class="download-req">Windows 10 (Build 22000+) / Windows 11</p>
+          <div class="download-actions">
+            <a href="#download" class="btn-dl btn-dl-soon" onclick="return false">Windows 版即将发布</a>
+          </div>
+        </div>
+      </div>
+      <p class="download-note">
+        ⚠️ <strong>注意：</strong>macOS 首次打开时，请在"系统设置 → 隐私与安全性"中允许运行。<br>
+        Windows 10 早期版本（Build &lt; 22000）不兼容 Claude Code，建议升级系统或使用 WSL2。
+      </p>
+    </div>
+  </section>
+
+  <!-- ====== FAQ ====== -->
+  <section id="faq">
+    <div class="container">
+      <h2 class="section-title">常见问题</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>这个工具需要付费吗？</span>
+            <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer"><p>完全免费。claudeCode引导 是开源软件 (MIT License)，你可以自由使用、修改和分发。</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>Claude Code 本身需要付费吗？</span>
+            <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer"><p>Claude Code 是 Anthropic 推出的免费 CLI 工具。使用本工具安装后默认配置的是 DeepSeek API，你需要有 DeepSeek API Key（按用量付费，价格远低于 Claude API）。你也可以自行改为其他模型提供商。</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>需要什么系统版本？</span>
+            <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer"><p>macOS 11 (Big Sur) 及以上；Windows 10 Build 22000 及以上，或 Windows 11。不支持 Linux（后续版本考虑）。</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>安装失败了怎么办？</span>
+            <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer"><p>每步安装失败后都有<strong>重试</strong>按钮（Node.js/pnpm 步骤还可<strong>跳过</strong>）。底部的<strong>全流程日志</strong>会记录每一步的详细信息，你可以导出日志排查问题，或联系开发者获取帮助。</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>可以用其他模型吗？比如 OpenAI？</span>
+            <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer"><p>v1.0 默认配置 DeepSeek API。你可以在 Step 5 填入自定义 Base URL 来使用其他兼容 OpenAI 接口的模型。后续版本计划支持更多模型提供商。</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" aria-expanded="false">
+            <span>macOS 提示"无法验证开发者"怎么办？</span>
+            <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="faq-answer"><p>这是 macOS 对未签名应用的安全提示。前往 <strong>系统设置 → 隐私与安全性</strong>，点击"仍要打开"即可。应用没有任何恶意代码，源代码完全公开。</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== Footer ====== -->
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>支持开发者</h4>
+          <p>如果这个工具帮到了你，可以请开发者喝杯咖啡 ☕</p>
+          <img src="../../docs/img/donate.jpg" alt="赞赏码" class="footer-qr" loading="lazy" width="180" height="180">
+        </div>
+        <div class="footer-col">
+          <h4>联系开发者</h4>
+          <p>有问题或建议？微信扫码联系 💬</p>
+          <img src="../../docs/img/contact.jpg" alt="联系开发者" class="footer-qr" loading="lazy" width="180" height="180">
+        </div>
+        <div class="footer-col">
+          <h4>相关资源</h4>
+          <ul>
+            <li><a href="https://claude.ai/code" target="_blank" rel="noopener">Claude Code 官方</a></li>
+            <li><a href="https://platform.deepseek.com/" target="_blank" rel="noopener">DeepSeek API</a></li>
+            <li><a href="https://banwagong1.com/claude-code.html" target="_blank" rel="noopener">Claude Code 指令速查表</a></li>
+            <li><a href="https://github.com/tingyuTy/cc_install" target="_blank" rel="noopener">GitHub 仓库</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>claudeCode引导 v1.0.0 · MIT License · 用 ❤️ 为开发者打造</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ====== Lightbox ====== -->
+  <div id="lightbox" class="lightbox">
+    <button class="lightbox-close" id="lightboxClose">&times;</button>
+    <img id="lightboxImg" src="" alt="截图放大">
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
